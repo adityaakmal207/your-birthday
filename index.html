@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Birthday 🎂</title>
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(to bottom, #000080, #000033);
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    .candle {
+        width: 20px;
+        height: 100px;
+        background-color: white;
+        margin: 0 auto;
+        position: relative;
+    }
+
+    .flame {
+        width: 15px;
+        height: 40px; /* Tinggi api diperbesar */
+        background: linear-gradient(to top, #ffcc00, #ff6600, #ff3300); /* Gradien warna api */
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        position: absolute;
+        top: -45px; /* Posisi api di atas lilin */
+        left: 50%;
+        transform: translateX(-50%);
+        animation: flicker 0.1s infinite alternate, sway 2s infinite ease-in-out;
+        box-shadow: 0 0 20px rgba(255, 102, 0, 0.8), 0 0 40px rgba(255, 51, 0, 0.6); /* Efek glow api */
+    }
+    /* Animasi api menghilang */
+    .flame.extinguish {
+        animation: extinguishFlame 0.5s forwards;
+    }
+
+    @keyframes flicker {
+        0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.9;
+        }
+        50% {
+            transform: translateX(-50%) scale(1.05);
+            opacity: 1;
+        }
+        100% {
+            transform: translateX(-50%) scale(0.95);
+            opacity: 0.8;
+        }
+    }
+
+    @keyframes sway {
+        0%, 100% {
+            transform: translateX(-50%) rotate(2deg);
+        }
+        50% {
+            transform: translateX(-50%) rotate(-2deg);
+        }
+    }
+
+    @keyframes extinguishFlame {
+        0% {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(-50%) scale(0);
+        }
+    }
+
+    /* Sumbu lilin */
+    .wick {
+        width: 2px;
+        height: 10px;
+        background-color: #333;
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Efek asap */
+    .smoke {
+        width: 10px;
+        height: 10px;
+        background-color: #666;
+        border-radius: 50%;
+        position: absolute;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        animation: smokeRise 2s ease-out forwards infinite;
+    }
+
+    @keyframes smokeRise {
+        0% {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        100% {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-100px);
+        }
+    }
+
+    button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    color: #000080;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 0 10px rgba(255, 204, 0, 0.5);
+}
+
+button:hover {
+    background-color: #ffdd00;
+    color: #000080;
+    box-shadow: 0 0 20px rgba(255, 221, 0, 0.8), 0 0 40px rgba(255, 221, 0, 0.8), 0 0 60px rgba(255, 221, 0, 0.8);
+    transform: scale(1.05);
+}
+
+    .hidden {
+        display: none;
+    }
+
+    #birthdayMessage {
+        margin-top: 20px;
+        font-size: 1em;
+        animation: fadeIn 2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .cursor {
+        display: inline-block;
+        width: 3px;
+        background-color: white;
+        animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+        }
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="candle">
+            <div class="flame" id="flame"></div>
+            <div class="wick"></div> <!-- Sumbu lilin -->
+            <div class="smoke" id="smoke"></div> <!-- Efek asap -->
+        </div>
+        <button id="blowButton">Tiup Lilin</button>
+        <h1 id="birthdayMessage" class="hidden">
+            <span id="typingText"></span>
+            <span class="cursor">|</span>
+        </h1>
+        <audio id="birthdayMusic" src="https://raw.githubusercontent.com/adityaakmal207/music/main/happy-birthday.mp3" loop></audio>
+    </div>
+    <script>
+    const texts = ["Happy Birthday Mutia Heriani","Kue nya via online aja ya 😁","🎂🎂🎂🎂", "Semoga Selalu Bahagia Teyuss :)"];
+    let count = 0;
+    let index = 0;
+    let currentText = "";
+    let letter = "";
+    let isTyping = false;
+
+    function type() {
+        if (count === texts.length) {
+            count = 0;
+        }
+        currentText = texts[count];
+        letter = currentText.slice(0, ++index);
+
+        document.getElementById("typingText").textContent = letter;
+        if (letter.length === currentText.length) {
+            count++;
+            index = 0;
+            setTimeout(type, 2000); // Jeda sebelum mengetik teks berikutnya
+        } else {
+            setTimeout(type, 100); // Kecepatan mengetik
+        }
+    }
+    
+    document.getElementById('blowButton').addEventListener('click', function() {
+        const flame = document.getElementById('flame');
+        const smoke = document.getElementById('smoke');
+        const birthdayMessage = document.getElementById('birthdayMessage');
+        const birthdayMusic = document.getElementById('birthdayMusic');
+
+        // Matikan api dengan animasi
+        flame.classList.add('extinguish');
+
+        // Tampilkan efek asap
+        smoke.style.opacity = 1;
+
+        setTimeout(() => {
+        // Tampilkan pesan ulang tahun
+            birthdayMessage.classList.remove('hidden');
+
+            // Mulai animasi ketik jika belum dimulai
+            if (!isTyping) {
+                isTyping = true;
+                type();
+            }
+
+            // Mainkan musik ulang tahun
+            birthdayMusic.play();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

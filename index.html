@@ -2,438 +2,341 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy Birthday Mutia! 🎂</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HBD Mutia Heriani!</title>
     <style>
-    body {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: linear-gradient(to bottom, #000080, #000033);
-        font-family: 'Arial', sans-serif;
-        color: white;
-        overflow: hidden; /* Mencegah scrollbar muncul saat partikel keluar layar */
-    }
+        /* --- RESET & BASIC SETUP --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .container {
-        text-align: center;
-        position: relative;
-        z-index: 10; /* Pastikan konten HTML di atas canvas */
-    }
+        body {
+            background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
 
-    /* Canvas untuk efek partikel */
-    #particleCanvas {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1; /* Di belakang teks tapi di atas background */
-        pointer-events: none; /* Supaya tidak menghalangi klik tombol */
-    }
+        /* --- FIREWORKS CANVAS --- */
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
 
-    .candle {
-        width: 20px;
-        height: 100px;
-        background-color: white;
-        margin: 0 auto;
-        position: relative;
-        transition: opacity 1s ease; /* Transisi menghilang */
-    }
+        /* --- GLASSMORPHISM CARD --- */
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            border-radius: 20px;
+            padding: 40px 20px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            transition: all 0.5s ease;
+            min-height: 400px; /* Menjaga tinggi agar tidak lompat saat mengetik */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .flame {
-        width: 15px;
-        height: 40px;
-        background: linear-gradient(to top, #ffcc00, #ff6600, #ff3300);
-        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-        position: absolute;
-        top: -45px;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: flicker 0.1s infinite alternate, sway 2s infinite ease-in-out;
-        box-shadow: 0 0 20px rgba(255, 102, 0, 0.8), 0 0 40px rgba(255, 51, 0, 0.6);
-    }
+        /* --- CAKE & CANDLE ANIMATION --- */
+        .cake-container {
+            position: relative;
+            width: 150px;
+            height: 120px;
+            margin-bottom: 20px;
+            transition: margin 0.5s ease;
+        }
 
-    .flame.extinguish {
-        animation: extinguishFlame 0.5s forwards;
-    }
+        .cake-base {
+            position: absolute;
+            bottom: 0;
+            left: 15px;
+            width: 120px;
+            height: 60px;
+            background: #ff9a9e;
+            border-radius: 10px 10px 5px 5px;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .cake-base::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: #fad0c4;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
-    @keyframes flicker {
-        0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
-        50% { transform: translateX(-50%) scale(1.05); opacity: 1; }
-        100% { transform: translateX(-50%) scale(0.95); opacity: 0.8; }
-    }
+        .candle {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 40px;
+            background: linear-gradient(to bottom, #fff, #ddd);
+            border-radius: 2px;
+        }
 
-    @keyframes sway {
-        0%, 100% { transform: translateX(-50%) rotate(2deg); }
-        50% { transform: translateX(-50%) rotate(-2deg); }
-    }
+        .flame {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 20px;
+            background: radial-gradient(ellipse at bottom, #ffee00 0%, #ff6a00 100%);
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px #ff6a00, 0 0 20px #ff6a00;
+            animation: flicker 1s infinite alternate;
+            transform-origin: center bottom;
+            transition: all 0.5s ease;
+        }
 
-    @keyframes extinguishFlame {
-        0% { opacity: 1; transform: translateX(-50%) scale(1); }
-        100% { opacity: 0; transform: translateX(-50%) scale(0); }
-    }
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(1.1) skewX(2deg); opacity: 0.9; }
+        }
 
-    .wick {
-        width: 2px;
-        height: 10px;
-        background-color: #333;
-        position: absolute;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
+        .flame.off {
+            opacity: 0;
+            transform: translateX(-50%) scale(0);
+        }
 
-    .smoke {
-        width: 10px;
-        height: 10px;
-        background-color: #aaa;
-        border-radius: 50%;
-        position: absolute;
-        top: -50px;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 0;
-        filter: blur(2px);
-    }
+        /* --- TEXT & UI --- */
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            opacity: 0.9;
+        }
 
-    /* Animasi asap yang lebih realistis */
-    @keyframes smokeRise {
-        0% { opacity: 0.8; transform: translateX(-50%) translateY(0) scale(1); }
-        100% { opacity: 0; transform: translateX(-50%) translateY(-100px) scale(3); }
-    }
+        p.wish {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #ffffff;
+            font-weight: 500;
+            min-height: 100px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            /* Tidak di-hide dengan display:none agar layout stabil, tapi isinya kosong */
+        }
 
-    button {
-        margin-top: 30px;
-        padding: 12px 25px;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        background-color: #ffcc00;
-        border: none;
-        border-radius: 25px;
-        color: #000080;
-        transition: all 0.3s ease;
-        box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
-        position: relative;
-        z-index: 100;
-    }
+        p.instruction {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
 
-    button:hover {
-        background-color: #ffdd00;
-        transform: scale(1.1);
-        box-shadow: 0 0 20px rgba(255, 221, 0, 0.8);
-    }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            outline: none;
+            margin-top: 20px;
+        }
 
-    .hidden {
-        display: none;
-    }
+        .btn:active {
+            transform: scale(0.95);
+        }
 
-    /* Area Pesan Ulang Tahun */
-    .message-area {
-        position: absolute;
-        top: 20%; /* Posisi di atas kue partikel */
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-        z-index: 20;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    }
-
-    #birthdayMessage {
-        font-size: 1.5em;
-        line-height: 1.5;
-        min-height: 3em;
-    }
-
-    .cursor {
-        display: inline-block;
-        width: 3px;
-        background-color: white;
-        animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0; }
-    }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="particleCanvas"></canvas>
+    <canvas id="canvas"></canvas>
 
-    <div class="container">
-        
-        <div class="message-area">
-            <h1 id="birthdayMessage" class="hidden">
-                <span id="typingText"></span>
-                <span class="cursor">|</span>
-            </h1>
+    <div class="card">
+        <div class="cake-container" id="cakePart">
+            <div class="candle">
+                <div class="flame" id="flame"></div>
+            </div>
+            <div class="cake-base"></div>
         </div>
 
-        <div class="candle" id="candleElement">
-            <div class="flame" id="flame"></div>
-            <div class="wick"></div>
-            <div class="smoke" id="smoke"></div>
-        </div>
+        <h1 id="title">Make a Wish!</h1>
+        <p class="instruction" id="instruction">Tutup matamu, ucapkan harapan, lalu tekan tombol di bawah.</p>
         
-        <button id="blowButton">Tiup Lilin</button>
+        <p class="wish" id="wishMessage"></p>
 
-        <audio id="birthdayMusic" src="https://raw.githubusercontent.com/adityaakmal207/music/main/happy-birthday.mp3" loop></audio>
+        <button class="btn" id="blowBtn" onclick="blowCandle()">Tiup Lilin 🌬️</button>
     </div>
 
+    <audio id="hbdSong" loop>
+        <source src="https://commondatastorage.googleapis.com/codeskulptor-assets/Epoq-Lepidoptera.ogg" type="audio/ogg"> 
+    </audio>
+
     <script>
-    // --- Logic Ketik (Typewriter) ---
-    const texts = ["Happy Birthday Mutia Heriani ✨", "Panjang umur & sehat selalu! 🤲", "Ini kue virtual spesial buat kamu 🎂", "Semoga hari-harimu menyenangkan! 😊"];
-    let count = 0;
-    let index = 0;
-    let currentText = "";
-    let letter = "";
-    let isTyping = false;
+        // --- DATA UCAPAN (Diedit di sini) ---
+        // Setiap baris dalam tanda kutip adalah satu baris teks
+        const textLines = [
+            "Happy Birthday Mutia Heriani ❤️",
+            "Selamat Ulang Tahun! 🎉",
+            "Sehat & Bahagia Selalu yaa.. 🤲",
+            "Enjoy your special day! 🎂"
+        ];
 
-    function type() {
-        if (count === texts.length) {
-            count = 0;
-        }
-        currentText = texts[count];
-        letter = currentText.slice(0, ++index);
-
-        document.getElementById("typingText").textContent = letter;
-        if (letter.length === currentText.length) {
-            count++;
-            index = 0;
-            setTimeout(type, 2000); 
-        } else {
-            setTimeout(type, 100); 
-        }
-    }
-
-    // --- Logic Canvas (Fireworks & Cake) ---
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    
-    // Set ukuran canvas
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-
-    let particles = [];
-    let fireworks = [];
-
-    // Class untuk Partikel Kue
-    class CakeParticle {
-        constructor(targetX, targetY, color) {
-            this.targetX = targetX;
-            this.targetY = targetY;
-            // Posisi awal random dari luar layar
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() < 0.5 ? -50 : canvas.height + 50; 
-            
-            this.color = color;
-            this.size = Math.random() * 3 + 1;
-            // Kecepatan mendekat ke target
-            this.vx = (this.targetX - this.x) * 0.02;
-            this.vy = (this.targetY - this.y) * 0.02;
-            this.arrived = false;
-        }
-
-        update() {
-            // Gerakan easing (semakin dekat semakin lambat)
-            const dx = this.targetX - this.x;
-            const dy = this.targetY - this.y;
-            
-            if (!this.arrived) {
-                this.x += dx * 0.05;
-                this.y += dy * 0.05;
-                
-                // Jika sudah sangat dekat, kunci posisi
-                if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
-                    this.x = this.targetX;
-                    this.y = this.targetY;
-                    this.arrived = true;
-                }
-            } else {
-                // Efek "bernafas" atau bergetar sedikit setelah jadi kue
-                this.x += (Math.random() - 0.5) * 1;
-                this.y += (Math.random() - 0.5) * 1;
-            }
-        }
-
-        draw() {
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    // Class untuk Kembang Api
-    class FireworkParticle {
-        constructor(x, y, color) {
-            this.x = x;
-            this.y = y;
-            this.color = color;
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 5 + 2;
-            this.vx = Math.cos(angle) * speed;
-            this.vy = Math.sin(angle) * speed;
-            this.gravity = 0.05;
-            this.friction = 0.98;
-            this.alpha = 1;
-            this.decay = Math.random() * 0.01 + 0.01;
-        }
-
-        update() {
-            this.vx *= this.friction;
-            this.vy *= this.friction;
-            this.vy += this.gravity;
-            this.x += this.vx;
-            this.y += this.vy;
-            this.alpha -= this.decay;
-        }
-
-        draw() {
-            ctx.save();
-            ctx.globalAlpha = this.alpha;
-            ctx.fillStyle = this.color;
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-        }
-    }
-
-    // Fungsi membuat titik-titik target untuk bentuk Kue
-    function createCakeShape() {
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2 + 100; // Posisi kue agak ke bawah
-        const points = [];
-
-        // 1. Layer Bawah (Coklat Tua) - Lebar 200, Tinggi 80
-        for(let x = -100; x <= 100; x += 6) {
-            for(let y = 0; y <= 80; y += 6) {
-                points.push({x: cx + x, y: cy + y, color: '#8B4513'});
-            }
-        }
-
-        // 2. Layer Atas (Pink/Krem) - Lebar 160, Tinggi 60
-        for(let x = -80; x <= 80; x += 5) {
-            for(let y = -60; y < 0; y += 5) {
-                points.push({x: cx + x, y: cy + y, color: '#FFC0CB'});
-            }
-        }
-
-        // 3. Dekorasi / Icing (Putih) di antara layer
-        for(let x = -105; x <= 105; x += 10) {
-             points.push({x: cx + x, y: cy, color: '#FFF'});
-        }
-
-        // 4. Lilin (Batang)
-        const candleX = [ -40, 0, 40 ]; // 3 lilin
-        candleX.forEach(posX => {
-            for(let y = -100; y < -60; y += 4) {
-                 points.push({x: cx + posX, y: cy + y, color: '#EEE'}); // Batang lilin putih
-                 points.push({x: cx + posX, y: cy + y, color: '#FF0000'}); // Strip merah
-            }
-            // Api Lilin (Kuning/Oren) - Berkedip nanti di logic update
-            for(let f = 0; f < 10; f++){
-                 points.push({x: cx + posX + (Math.random()-0.5)*10, y: cy - 110 + (Math.random()-0.5)*15, color: '#FFD700'});
-            }
-        });
-
-        // Buat objek partikel berdasarkan titik-titik tersebut
-        points.forEach(p => {
-            particles.push(new CakeParticle(p.x, p.y, p.color));
-        });
-    }
-
-    function createFireworks(x, y) {
-        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        for (let i = 0; i < 50; i++) {
-            fireworks.push(new FireworkParticle(x, y, color));
-        }
-    }
-
-    function animate() {
-        // Hapus canvas dengan efek trail transparan
-        ctx.fillStyle = 'rgba(0, 0, 51, 0.2)'; // Sesuai warna bg HTML
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Update & Gambar Fireworks
-        for (let i = fireworks.length - 1; i >= 0; i--) {
-            fireworks[i].update();
-            fireworks[i].draw();
-            if (fireworks[i].alpha <= 0) {
-                fireworks.splice(i, 1);
-            }
-        }
-
-        // Update & Gambar Kue Partikel
-        particles.forEach(p => {
-            p.update();
-            p.draw();
-        });
-
-        requestAnimationFrame(animate);
-    }
-    
-    // Jalankan loop animasi
-    animate();
-
-    // --- Event Handler ---
-    document.getElementById('blowButton').addEventListener('click', function() {
+        // --- LOGIC UTAMA ---
         const flame = document.getElementById('flame');
-        const smoke = document.getElementById('smoke');
-        const birthdayMessage = document.getElementById('birthdayMessage');
-        const birthdayMusic = document.getElementById('birthdayMusic');
-        const candleElement = document.getElementById('candleElement');
+        const title = document.getElementById('title');
+        const instruction = document.getElementById('instruction');
+        const wishMessage = document.getElementById('wishMessage');
+        const blowBtn = document.getElementById('blowBtn');
+        const audio = document.getElementById('hbdSong');
+        
+        // Ganti link lagu di sini jika mau
+        audio.src = "https://raw.githubusercontent.com/adityaakmal207/music/main/happy-birthday_n.mp3"; 
 
-        // 1. Matikan Api
-        flame.classList.add('extinguish');
+        function blowCandle() {
+            flame.classList.add('off');
+            
+            // Putar musik
+            audio.play().catch(e => console.log(e));
 
-        // 2. Munculkan Asap
-        smoke.style.opacity = 1;
-        smoke.style.animation = "smokeRise 2s forwards";
-
-        // 3. Mainkan Musik
-        birthdayMusic.play().catch(e => console.log("Audio play failed (user interaction needed usually)"));
-
-        setTimeout(() => {
-            // 4. Sembunyikan Lilin HTML Lama (Fade out)
-            candleElement.style.opacity = "0";
-
-            // 5. Trigger Kembang Api (Beberapa kali)
-            let fwCount = 0;
-            const fwInterval = setInterval(() => {
-                const rx = Math.random() * canvas.width;
-                const ry = Math.random() * (canvas.height / 2); // Kembang api di bagian atas
-                createFireworks(rx, ry);
-                fwCount++;
-                if(fwCount > 5) clearInterval(fwInterval);
-            }, 300);
-
-            // 6. Bentuk Kue dari Partikel
+            // Hilangkan tombol & instruksi
+            blowBtn.classList.add('hidden');
+            instruction.classList.add('hidden');
+            
+            // Ubah Judul
+            title.innerText = ""; // Kosongkan judul agar fokus ke ucapan
+            
             setTimeout(() => {
-                createCakeShape();
-            }, 500);
+                // Mulai kembang api
+                loop();
+                // Mulai efek ketik
+                typeWriter();
+            }, 800);
+        }
 
-            // 7. Tampilkan Pesan Ulang Tahun
-            birthdayMessage.classList.remove('hidden');
-            if (!isTyping) {
-                isTyping = true;
-                type();
+        // --- FUNGSI EFEK KETIK (Typewriter) ---
+        let lineIndex = 0;
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (lineIndex < textLines.length) {
+                if (charIndex < textLines[lineIndex].length) {
+                    wishMessage.innerHTML += textLines[lineIndex].charAt(charIndex);
+                    charIndex++;
+                    setTimeout(typeWriter, 50); // Kecepatan mengetik (makin kecil makin cepat)
+                } else {
+                    wishMessage.innerHTML += "<br><br>"; // Pindah baris
+                    lineIndex++;
+                    charIndex = 0;
+                    setTimeout(typeWriter, 500); // Jeda sebelum baris berikutnya muncul
+                }
             }
+        }
 
-        }, 1000); // Tunggu 1 detik setelah tiup baru efek mulai
-    });
+        // --- CANVAS FIREWORKS (Sama seperti sebelumnya) ---
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        let cw = window.innerWidth;
+        let ch = window.innerHeight;
+        canvas.width = cw;
+        canvas.height = ch;
+
+        window.addEventListener('resize', () => {
+            cw = window.innerWidth;
+            ch = window.innerHeight;
+            canvas.width = cw;
+            canvas.height = ch;
+        });
+
+        const random = (min, max) => Math.random() * (max - min) + min;
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; y = y; this.color = color;
+                this.velocity = { x: random(-2, 2), y: random(-2, 2) };
+                this.alpha = 1; this.life = random(20, 40); this.decay = random(0.015, 0.03);
+                this.x = x; this.y = y;
+            }
+            draw() {
+                ctx.save(); ctx.globalAlpha = this.alpha; ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color; ctx.fill(); ctx.restore();
+            }
+            update() {
+                this.velocity.x *= 0.96; this.velocity.y *= 0.96;
+                this.x += this.velocity.x; this.y += this.velocity.y;
+                this.alpha -= this.decay;
+            }
+        }
+
+        class Firework {
+            constructor() {
+                this.x = random(cw * 0.1, cw * 0.9); this.y = ch;
+                this.targetY = random(ch * 0.2, ch * 0.5);
+                this.speed = random(3, 6);
+                this.color = `hsl(${random(0, 360)}, 100%, 60%)`;
+                this.particles = []; this.exploded = false;
+            }
+            draw() {
+                if (!this.exploded) {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, 3, 0, Math.PI*2);
+                    ctx.fillStyle = this.color; ctx.fill();
+                } else {
+                    this.particles.forEach(p => p.draw());
+                }
+            }
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) this.explode();
+                } else {
+                    this.particles.forEach((p, i) => {
+                        p.update();
+                        if (p.alpha <= 0) this.particles.splice(i, 1);
+                    });
+                }
+            }
+            explode() {
+                this.exploded = true;
+                for (let i=0; i<40; i++) this.particles.push(new Particle(this.x, this.y, this.color));
+            }
+        }
+
+        let fireworks = [];
+        function loop() {
+            requestAnimationFrame(loop);
+            ctx.fillStyle = 'rgba(15, 52, 96, 0.2)';
+            ctx.fillRect(0, 0, cw, ch);
+            if (Math.random() < 0.05) fireworks.push(new Firework());
+            fireworks.forEach((fw, i) => {
+                fw.update(); fw.draw();
+                if (fw.exploded && fw.particles.length === 0) fireworks.splice(i, 1);
+            });
+        }
     </script>
 </body>
 </html>

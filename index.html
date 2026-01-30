@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Birthday 🎂</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <title>Happy Birthday Mutia! 🎂</title>
     <style>
     body {
         margin: 0;
@@ -14,12 +13,26 @@
         align-items: center;
         height: 100vh;
         background: linear-gradient(to bottom, #000080, #000033);
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
         color: white;
+        overflow: hidden; /* Mencegah scrollbar muncul saat partikel keluar layar */
     }
 
     .container {
         text-align: center;
+        position: relative;
+        z-index: 10; /* Pastikan konten HTML di atas canvas */
+    }
+
+    /* Canvas untuk efek partikel */
+    #particleCanvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1; /* Di belakang teks tapi di atas background */
+        pointer-events: none; /* Supaya tidak menghalangi klik tombol */
     }
 
     .candle {
@@ -28,61 +41,42 @@
         background-color: white;
         margin: 0 auto;
         position: relative;
+        transition: opacity 1s ease; /* Transisi menghilang */
     }
 
     .flame {
         width: 15px;
-        height: 40px; /* Tinggi api diperbesar */
-        background: linear-gradient(to top, #ffcc00, #ff6600, #ff3300); /* Gradien warna api */
+        height: 40px;
+        background: linear-gradient(to top, #ffcc00, #ff6600, #ff3300);
         border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
         position: absolute;
-        top: -45px; /* Posisi api di atas lilin */
+        top: -45px;
         left: 50%;
         transform: translateX(-50%);
         animation: flicker 0.1s infinite alternate, sway 2s infinite ease-in-out;
-        box-shadow: 0 0 20px rgba(255, 102, 0, 0.8), 0 0 40px rgba(255, 51, 0, 0.6); /* Efek glow api */
+        box-shadow: 0 0 20px rgba(255, 102, 0, 0.8), 0 0 40px rgba(255, 51, 0, 0.6);
     }
-    /* Animasi api menghilang */
+
     .flame.extinguish {
         animation: extinguishFlame 0.5s forwards;
     }
 
     @keyframes flicker {
-        0% {
-        transform: translateX(-50%) scale(1);
-        opacity: 0.9;
-        }
-        50% {
-            transform: translateX(-50%) scale(1.05);
-            opacity: 1;
-        }
-        100% {
-            transform: translateX(-50%) scale(0.95);
-            opacity: 0.8;
-        }
+        0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+        50% { transform: translateX(-50%) scale(1.05); opacity: 1; }
+        100% { transform: translateX(-50%) scale(0.95); opacity: 0.8; }
     }
 
     @keyframes sway {
-        0%, 100% {
-            transform: translateX(-50%) rotate(2deg);
-        }
-        50% {
-            transform: translateX(-50%) rotate(-2deg);
-        }
+        0%, 100% { transform: translateX(-50%) rotate(2deg); }
+        50% { transform: translateX(-50%) rotate(-2deg); }
     }
 
     @keyframes extinguishFlame {
-        0% {
-            opacity: 1;
-            transform: translateX(-50%) scale(1);
-        }
-        100% {
-            opacity: 0;
-            transform: translateX(-50%) scale(0);
-        }
+        0% { opacity: 1; transform: translateX(-50%) scale(1); }
+        100% { opacity: 0; transform: translateX(-50%) scale(0); }
     }
 
-    /* Sumbu lilin */
     .wick {
         width: 2px;
         height: 10px;
@@ -93,68 +87,66 @@
         transform: translateX(-50%);
     }
 
-    /* Efek asap */
     .smoke {
         width: 10px;
         height: 10px;
-        background-color: #666;
+        background-color: #aaa;
         border-radius: 50%;
         position: absolute;
         top: -50px;
         left: 50%;
         transform: translateX(-50%);
         opacity: 0;
-        animation: smokeRise 2s ease-out forwards infinite;
+        filter: blur(2px);
     }
 
+    /* Animasi asap yang lebih realistis */
     @keyframes smokeRise {
-        0% {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-        100% {
-            opacity: 0;
-            transform: translateX(-50%) translateY(-100px);
-        }
+        0% { opacity: 0.8; transform: translateX(-50%) translateY(0) scale(1); }
+        100% { opacity: 0; transform: translateX(-50%) translateY(-100px) scale(3); }
     }
 
     button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    background-color: #ffcc00;
-    border: none;
-    border-radius: 5px;
-    color: #000080;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 0 10px rgba(255, 204, 0, 0.5);
-}
+        margin-top: 30px;
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        background-color: #ffcc00;
+        border: none;
+        border-radius: 25px;
+        color: #000080;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(255, 204, 0, 0.6);
+        position: relative;
+        z-index: 100;
+    }
 
-button:hover {
-    background-color: #ffdd00;
-    color: #000080;
-    box-shadow: 0 0 20px rgba(255, 221, 0, 0.8), 0 0 40px rgba(255, 221, 0, 0.8), 0 0 60px rgba(255, 221, 0, 0.8);
-    transform: scale(1.05);
-}
+    button:hover {
+        background-color: #ffdd00;
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(255, 221, 0, 0.8);
+    }
 
     .hidden {
         display: none;
     }
 
-    #birthdayMessage {
-        margin-top: 20px;
-        font-size: 1em;
-        animation: fadeIn 2s ease-in-out;
+    /* Area Pesan Ulang Tahun */
+    .message-area {
+        position: absolute;
+        top: 20%; /* Posisi di atas kue partikel */
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        z-index: 20;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
     }
 
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-        100% {
-            opacity: 1;
-        }
+    #birthdayMessage {
+        font-size: 1.5em;
+        line-height: 1.5;
+        min-height: 3em;
     }
 
     .cursor {
@@ -165,31 +157,38 @@ button:hover {
     }
 
     @keyframes blink {
-        0%, 100% {
-            opacity: 1;
-        }
-        50% {
-            opacity: 0;
-        }
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
     }
     </style>
 </head>
 <body>
+
+    <canvas id="particleCanvas"></canvas>
+
     <div class="container">
-        <div class="candle">
-            <div class="flame" id="flame"></div>
-            <div class="wick"></div> <!-- Sumbu lilin -->
-            <div class="smoke" id="smoke"></div> <!-- Efek asap -->
+        
+        <div class="message-area">
+            <h1 id="birthdayMessage" class="hidden">
+                <span id="typingText"></span>
+                <span class="cursor">|</span>
+            </h1>
         </div>
+
+        <div class="candle" id="candleElement">
+            <div class="flame" id="flame"></div>
+            <div class="wick"></div>
+            <div class="smoke" id="smoke"></div>
+        </div>
+        
         <button id="blowButton">Tiup Lilin</button>
-        <h1 id="birthdayMessage" class="hidden">
-            <span id="typingText"></span>
-            <span class="cursor">|</span>
-        </h1>
+
         <audio id="birthdayMusic" src="https://raw.githubusercontent.com/adityaakmal207/music/main/happy-birthday.mp3" loop></audio>
     </div>
+
     <script>
-    const texts = ["Happy Birthday Mutia Heriani","Kue nya via online aja ya 😁","🎂🎂🎂🎂", "Semoga Selalu Bahagia Teyuss :)"];
+    // --- Logic Ketik (Typewriter) ---
+    const texts = ["Happy Birthday Mutia Heriani ✨", "Panjang umur & sehat selalu! 🤲", "Ini kue virtual spesial buat kamu 🎂", "Semoga hari-harimu menyenangkan! 😊"];
     let count = 0;
     let index = 0;
     let currentText = "";
@@ -207,38 +206,234 @@ button:hover {
         if (letter.length === currentText.length) {
             count++;
             index = 0;
-            setTimeout(type, 2000); // Jeda sebelum mengetik teks berikutnya
+            setTimeout(type, 2000); 
         } else {
-            setTimeout(type, 100); // Kecepatan mengetik
+            setTimeout(type, 100); 
         }
     }
+
+    // --- Logic Canvas (Fireworks & Cake) ---
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
     
+    // Set ukuran canvas
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    let particles = [];
+    let fireworks = [];
+
+    // Class untuk Partikel Kue
+    class CakeParticle {
+        constructor(targetX, targetY, color) {
+            this.targetX = targetX;
+            this.targetY = targetY;
+            // Posisi awal random dari luar layar
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() < 0.5 ? -50 : canvas.height + 50; 
+            
+            this.color = color;
+            this.size = Math.random() * 3 + 1;
+            // Kecepatan mendekat ke target
+            this.vx = (this.targetX - this.x) * 0.02;
+            this.vy = (this.targetY - this.y) * 0.02;
+            this.arrived = false;
+        }
+
+        update() {
+            // Gerakan easing (semakin dekat semakin lambat)
+            const dx = this.targetX - this.x;
+            const dy = this.targetY - this.y;
+            
+            if (!this.arrived) {
+                this.x += dx * 0.05;
+                this.y += dy * 0.05;
+                
+                // Jika sudah sangat dekat, kunci posisi
+                if (Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+                    this.x = this.targetX;
+                    this.y = this.targetY;
+                    this.arrived = true;
+                }
+            } else {
+                // Efek "bernafas" atau bergetar sedikit setelah jadi kue
+                this.x += (Math.random() - 0.5) * 1;
+                this.y += (Math.random() - 0.5) * 1;
+            }
+        }
+
+        draw() {
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    // Class untuk Kembang Api
+    class FireworkParticle {
+        constructor(x, y, color) {
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 5 + 2;
+            this.vx = Math.cos(angle) * speed;
+            this.vy = Math.sin(angle) * speed;
+            this.gravity = 0.05;
+            this.friction = 0.98;
+            this.alpha = 1;
+            this.decay = Math.random() * 0.01 + 0.01;
+        }
+
+        update() {
+            this.vx *= this.friction;
+            this.vy *= this.friction;
+            this.vy += this.gravity;
+            this.x += this.vx;
+            this.y += this.vy;
+            this.alpha -= this.decay;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // Fungsi membuat titik-titik target untuk bentuk Kue
+    function createCakeShape() {
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2 + 100; // Posisi kue agak ke bawah
+        const points = [];
+
+        // 1. Layer Bawah (Coklat Tua) - Lebar 200, Tinggi 80
+        for(let x = -100; x <= 100; x += 6) {
+            for(let y = 0; y <= 80; y += 6) {
+                points.push({x: cx + x, y: cy + y, color: '#8B4513'});
+            }
+        }
+
+        // 2. Layer Atas (Pink/Krem) - Lebar 160, Tinggi 60
+        for(let x = -80; x <= 80; x += 5) {
+            for(let y = -60; y < 0; y += 5) {
+                points.push({x: cx + x, y: cy + y, color: '#FFC0CB'});
+            }
+        }
+
+        // 3. Dekorasi / Icing (Putih) di antara layer
+        for(let x = -105; x <= 105; x += 10) {
+             points.push({x: cx + x, y: cy, color: '#FFF'});
+        }
+
+        // 4. Lilin (Batang)
+        const candleX = [ -40, 0, 40 ]; // 3 lilin
+        candleX.forEach(posX => {
+            for(let y = -100; y < -60; y += 4) {
+                 points.push({x: cx + posX, y: cy + y, color: '#EEE'}); // Batang lilin putih
+                 points.push({x: cx + posX, y: cy + y, color: '#FF0000'}); // Strip merah
+            }
+            // Api Lilin (Kuning/Oren) - Berkedip nanti di logic update
+            for(let f = 0; f < 10; f++){
+                 points.push({x: cx + posX + (Math.random()-0.5)*10, y: cy - 110 + (Math.random()-0.5)*15, color: '#FFD700'});
+            }
+        });
+
+        // Buat objek partikel berdasarkan titik-titik tersebut
+        points.forEach(p => {
+            particles.push(new CakeParticle(p.x, p.y, p.color));
+        });
+    }
+
+    function createFireworks(x, y) {
+        const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        for (let i = 0; i < 50; i++) {
+            fireworks.push(new FireworkParticle(x, y, color));
+        }
+    }
+
+    function animate() {
+        // Hapus canvas dengan efek trail transparan
+        ctx.fillStyle = 'rgba(0, 0, 51, 0.2)'; // Sesuai warna bg HTML
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Update & Gambar Fireworks
+        for (let i = fireworks.length - 1; i >= 0; i--) {
+            fireworks[i].update();
+            fireworks[i].draw();
+            if (fireworks[i].alpha <= 0) {
+                fireworks.splice(i, 1);
+            }
+        }
+
+        // Update & Gambar Kue Partikel
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+
+        requestAnimationFrame(animate);
+    }
+    
+    // Jalankan loop animasi
+    animate();
+
+    // --- Event Handler ---
     document.getElementById('blowButton').addEventListener('click', function() {
         const flame = document.getElementById('flame');
         const smoke = document.getElementById('smoke');
         const birthdayMessage = document.getElementById('birthdayMessage');
         const birthdayMusic = document.getElementById('birthdayMusic');
+        const candleElement = document.getElementById('candleElement');
 
-        // Matikan api dengan animasi
+        // 1. Matikan Api
         flame.classList.add('extinguish');
 
-        // Tampilkan efek asap
+        // 2. Munculkan Asap
         smoke.style.opacity = 1;
+        smoke.style.animation = "smokeRise 2s forwards";
+
+        // 3. Mainkan Musik
+        birthdayMusic.play().catch(e => console.log("Audio play failed (user interaction needed usually)"));
 
         setTimeout(() => {
-        // Tampilkan pesan ulang tahun
-            birthdayMessage.classList.remove('hidden');
+            // 4. Sembunyikan Lilin HTML Lama (Fade out)
+            candleElement.style.opacity = "0";
 
-            // Mulai animasi ketik jika belum dimulai
+            // 5. Trigger Kembang Api (Beberapa kali)
+            let fwCount = 0;
+            const fwInterval = setInterval(() => {
+                const rx = Math.random() * canvas.width;
+                const ry = Math.random() * (canvas.height / 2); // Kembang api di bagian atas
+                createFireworks(rx, ry);
+                fwCount++;
+                if(fwCount > 5) clearInterval(fwInterval);
+            }, 300);
+
+            // 6. Bentuk Kue dari Partikel
+            setTimeout(() => {
+                createCakeShape();
+            }, 500);
+
+            // 7. Tampilkan Pesan Ulang Tahun
+            birthdayMessage.classList.remove('hidden');
             if (!isTyping) {
                 isTyping = true;
                 type();
             }
 
-            // Mainkan musik ulang tahun
-            birthdayMusic.play();
-            }, 500);
-        });
+        }, 1000); // Tunggu 1 detik setelah tiup baru efek mulai
+    });
     </script>
 </body>
 </html>
